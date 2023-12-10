@@ -1,7 +1,100 @@
 ---
 title: "Regression and Statistical Inference"
+author: "Geethika Tiramdas"
+subtitle: "Assignment solutions"
+toc: true
+number-sections: false
 ---
 
-::: callout-note
-You can delete everything in here and start fresh.
-:::
+# Part 1
+
+Read the data and check the dimensions. How many rows and how many columns does the data have? You could use e.g. the dim() command.
+
+```{r}
+library(tidyverse)
+# 1
+
+car_data <- readRDS("../../Causal_Data_Science_Data/car_prices.rds")
+car_data <- na.omit(car_data)
+cat("Dimensions of the data:", dim(car_data), "\n")
+```
+
+# Part 2
+
+Use appropriate commands to get a more detailed look at the data. What data types do you see? How do numbers differ from strings regarding their data type?
+
+```{r}
+# 2
+
+summary(car_data) # may also use str(car_data)
+head(car_data)
+
+```
+
+
+Has 22 Variables with 
+
+aspiration, doornumber, carbody, drivewheel, enginelocation, enginetype, cylindernumber, fuelsystem with *character values*, 
+
+and wheelbase, carlength, carwidth, carheight, curbweight, enginesize, boreratio, stroke, compressionratio, horsepower, peakrpm, citympg, highwaympg, price with *numeric values*.
+
+
+# Part 3
+
+Run a linear regression. You want to explain what factors are relevant for the pricing of a car.
+
+```{r}
+# 3
+car_model <- lm(price ~ doornumber + carbody + enginetype + fuelsystem + stroke + horsepower + citympg, data = car_data)
+summary(car_model)
+```
+
+With some limited knowledge about cars, I think the factors mentioned above are relevant to a car price.
+I will use horsepower for further analysis.
+
+# Part 4
+
+Choose one regressor and
+
+1. explain what data type it is and what values it can take on
+
+2. what effect it has on the price and what changing the value would have as a result
+
+3. whether its effect is statistically significant.
+
+Choosing "horsepower"
+
+```{r}
+# 4
+
+# data type it is and what values it can take on
+str(car_data$horsepower)
+# effect it has on the price and what changing the value would have as a result
+summary(car_model)$coefficients['horsepower',]
+# statistically significant
+summary(car_model)$coefficients['horsepower','Pr(>|t|)']
+```
+
+# Part 5
+
+Add a variable seat_heating to the data and assign a value TRUE for all observations. You can use e.g. df %>% mutate(new_variable = value). Assign it to a new object and run a regression. What coefficient do you get for the new variable seat_heating and how can you explain it?
+
+```{r}
+# 5
+
+# Add variable 'seat_heating' and run a regression
+car_prices_new <- car_data %>%
+  mutate(seat_heating = TRUE) %>%
+  na.omit()
+
+# Run a regression with the new variable
+model_new <- lm(price ~ doornumber + carbody + enginetype + fuelsystem + stroke + horsepower + citympg + seat_heating, data = car_prices_new)
+
+summary(car_prices_new$seat_heating)
+
+summary(model_new)
+```
+
+
+As seen in summary of regression model "seat_heatingTRUE" with NA is what we get - indicates that this categorical variable (seat_heating) has only one level, that is value "TRUE". This is proved with summary statement above this. 
+

@@ -1,98 +1,116 @@
 ---
 title: "Probability Theory"
+author: "Geethika Tiramdas"
+subtitle: "Assignment solutions"
+toc: true
+number-sections: false
 ---
 
-::: callout-note
-You can delete everything in here and start fresh.
-:::
+#  Assignment 1
 
-Make change!!
-This is a `.qmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
+From the picture: 
+![Probability Tree Given](../01_journal/01_probability_files/figure-html/01_tree.png){#fig-givenprob}
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+We know:
 
-# Text Formatting
+P(S) = 0.3
 
-*italics* and **bold**
+P(T) = 0.7
 
-superscript^2^ / subscript~2~
+P(T | S) = 0.2
 
-~~strikethrough~~
+P(T | <span style="text-decoration: overline;">S</span>) = 0.8
 
-`verbatim code`
+P(<span style="text-decoration: overline;">T</span> | S) = 0.6
 
-> Blockquote
+P(<span style="text-decoration: overline;">T</span> | <span style="text-decoration: overline;">S</span>) = 0.4
 
-# Headings
+Referring to ![Probability Tree Referred](../01_journal/01_probability_files/figure-html/1280px-Probability_tree_diagram.svg.png){#fig-referprob}
 
-## Header 2
-### Header 3
-#### Header 4
-##### Header 5
-###### Header 6
+The solutions:
 
-# Links & Images
+* P(T ∩ S) = P(S) \* P(T | S)
+* P(T ∩ <span style="text-decoration: overline;">S</span>) = P(S) \* P(T | <span style="text-decoration: overline;">S</span>)
+* P(<span style="text-decoration: overline;">T</span> ∩ S) = P(S) \* P(<span style="text-decoration: overline;">T</span> | S)
+* P(<span style="text-decoration: overline;">T</span> ∩ <span style="text-decoration: overline;">S</span>) = P(S) \* P(<span style="text-decoration: overline;">T</span> | <span style="text-decoration: overline;">S</span>)
 
-<https://quarto.org>
-
-[Quarto](https://quarto.org)
-
-![Caption](../../assets/img/elephant.png)
-
-[![Caption](../../assets/img/elephant.png)](https://quarto.org)
-
-[![Caption](../../assets/img/elephant.png)](https://quarto.org "An elephant")
-
-
-# Lists
-
-* unordered list
-    + sub-item 1
-    + sub-item 2
-        - sub-sub-item 1
-        
-*   item 2
-
-    Continued (indent 4 spaces)
-    
-    
-1. ordered list
-2. item 2
-    i) sub-item 1
-         A.  sub-sub-item 1
-         
-(@)  A list whose numbering
-
-continues after
-
-(@)  an interruption
-
-# Tables
-
-| Right | Left | Default | Center |
-|------:|:-----|---------|:------:|
-|   12  |  12  |    12   |    12  |
-|  123  |  123 |   123   |   123  |
-|    1  |    1 |     1   |     1  |
-
-# Source Code
-
-Use ``` to delimit blocks of source code:
-
-```
-code
-```
-
-Add a language to syntax highlight code blocks:
 
 ```{r}
-1 + 1
+S <- 0.3
+TgS <- 0.2 # 0.8 is Tbar given S
+TgSbar <- 0.6 # 0.4 is Tbar given Sbar
+
+TandS <- S * TgS
+TandSbar <- (1 - S) * TgSbar
+TbarandS <- S * (1 - TgS)
+TbarandSbar <- (1 - S) * (1 - TgSbar)
+
+print( paste( "Sum: ", ( TandS + TandSbar + TbarandS + TbarandSbar ) ) )
 ```
 
-```{r}
-cars
-```
+# Assignment 2
 
-```{r}
-plot(cars)
-```
+![Venn Diagram](../01_journal/01_probability_files/figure-html/venn_diagram.png){#fig-venn}
+
+From the venn diagram:
+
+* The percentage of customers using all three devices is 
+    + 5 or 0.5% of total customers
+* The percentage of customers using at least 2 devices 
+    + Customers using (Smartphones and Tablets) + (Tablet and Computer) + (Computer and Smartphone) + (all three)
+    + 199 or 19.9% of customers
+* The percentage of customers using only one device
+    + Customers using only smartphone + only Tablet + only computer
+    + 801 or 80.1% of customers
+
+# Assignment 3
+
+Given:
+
+* P(A) = 0.04
+* P(B|A) = 0.97
+* P(B|<span style="text-decoration: overline;">A</span>) = 0.01
+
+To find P(A|B) and P(<span style="text-decoration: overline;">A</span>|B)
+
+1. Calculate P(B):
+$$
+P(B) = P(B|A) \cdot P(A) + P(B|\overline{A}) \cdot P(\overline{A})
+$$
+
+
+$$
+P(B) = 0.97 \cdot 0.04 + 0.01 \cdot (1 - 0.04) \\
+$$
+
+$$
+P(B) = 0.0484
+$$
+2. Apply Bayes' Theorem:
+
+$$
+P(A | B) = \frac{P(B | A) \cdot P(A)}{P(B)} \\
+$$
+
+$$
+P (A | B) = \frac{0.97 \cdot 0.04}{0.0484}\\
+$$
+
+$$
+P(A | B) = 0.791
+$$
+Similarly,
+$$
+P(\overline{A} | B) = \frac{P(B | \overline{A}) \cdot P(\overline{A})}{P(B)} \\
+$$
+$$
+P (\overline{A} | B) = \frac{0.01 \cdot (1 - 0.04)}{0.0484}\\
+$$
+$$
+P(\overline{A} | B) = 0.209
+$$
+
+Now subsituting the values to the sentence:
+
+"These results show that in case the alarm is triggered, there is a probability of about **79.1%** that the product is flawless and a probability of about **20.9%** that the product is faulty". 
+

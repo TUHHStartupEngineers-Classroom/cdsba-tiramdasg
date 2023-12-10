@@ -1,5 +1,9 @@
 ---
 title: "Regression Discontinuity"
+author: "Geethika Tiramdas"
+subtitle: "Assignment solutions"
+toc: true
+number-sections: false
 ---
 
 ::: callout-note

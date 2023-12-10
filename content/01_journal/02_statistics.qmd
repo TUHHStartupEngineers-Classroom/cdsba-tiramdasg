@@ -1,7 +1,97 @@
 ---
 title: "Statistical Concepts"
+author: "Geethika Tiramdas"
+subtitle: "Assignment solutions"
+toc: true
+number-sections: false
 ---
 
-::: callout-note
-You can delete everything in here and start fresh.
-:::
+# Part 1
+
+For each variable, compute the following values. You can use the built-in functions or use the mathematical formulas.
+
+* Expected Value
+* Variance
+* Standard Deviation
+
+```{r}
+random_vars <- readRDS("../../Causal_Data_Science_Data/random_vars.rds")
+
+# part 1
+expected_value_age <- mean(random_vars$age)
+expected_value_income <- mean(random_vars$income)
+
+variance_age <- var(random_vars$age)
+variance_income <- var(random_vars$income)
+
+std_dev_age <- sd(random_vars$age)
+std_dev_income <- sd(random_vars$income)
+
+cat("Expected Values \nAge: ", expected_value_age,"\nIncome: ", expected_value_income)
+cat("Variance \nAge: ", variance_age,"\nIncome: ", variance_income)
+cat("Standard Deviation \nAge: ", std_dev_age,"\nIncome: ", std_dev_income)
+```
+
+# Part 2
+
+Explain, if it makes sense to compare the standard deviations.
+
+* Standard deviation measures the spread or variability of a distribution. If one variable has a much larger standard deviation than another, it indicates greater variability in the data points.
+* Comparing standard deviations makes sense if the variables are measured in same units. In this example one is age in years and another is salary in currency. Therefore, it is **not meaningful in this example** to compare standard deviations directly.
+
+# Part 3
+
+Then, examine the relationship between both variables and compute: covariance and correlation
+
+* Covariance is a measure of how 2 variables ***vary together***. If *positive*, it suggests that higher values of one variable are associated with higher variables of the other, and vice versa if *negative* covariance.
+* Correlation is a standardized measure that indicates the ***strength and direction of a linear relationship between 2 variables***. Ranges from -1 to 1, where -1 indicates a perfect negative linear relationship, +1 indicates a perfect positive linear relationship, and 0 indicates no linear relationship.
+
+```{r}
+covar_age_income <- cov(random_vars$age, random_vars$income)
+corr_age_income <- cor(random_vars$age, random_vars$income)
+
+cat("Covariance: ", covar_age_income, "\nCorrelation: ", corr_age_income)
+```
+
+
+# Part 4
+
+What measure is easier to interpret? Please discuss your interpretation.
+
+From above we see from the value of Covariance is too large and hard to interpret how the variables age and income vary with respect to each other.
+
+As correlation is standardized, ranging from -1 to 1, it is easier to compare the strength and direction of relationships between variables, regardless of the scale or units.
+
+Here, correlation is positive with a value of approximately 0.5479, implying a positive linear relationship between age and income.
+
+# Part 5
+
+Compute the conditional expected values for:
+
+1. E[income | age <= 18]
+2. E[income | age $\in$ [18, 65)]
+3. E[income | age >= 65]
+
+```{r}
+library(dplyr)
+
+random_vars <- random_vars %>%
+  filter(!is.na(income), !is.na(age))
+
+cond_exp_income_age_18 <- random_vars %>%
+  filter(age <= 18) %>%
+  summarise(mean_income = mean(income)) %>%
+  pull(mean_income)
+
+cond_exp_income_age_18_65 <- random_vars %>%
+  filter(age >= 18, age < 65) %>%
+  summarise(mean_income = mean(income)) %>%
+  pull(mean_income)
+
+cond_exp_income_age_65 <- random_vars %>%
+  filter(age >= 65) %>%
+  summarise(mean_income = mean(income)) %>%
+  pull(mean_income)
+
+cat("18 and below: ", cond_exp_income_age_18, "\n18 and 65: ", cond_exp_income_age_18_65, "\n65 above: ", cond_exp_income_age_65)
+```
