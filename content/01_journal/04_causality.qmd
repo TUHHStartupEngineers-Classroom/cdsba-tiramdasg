@@ -6,6 +6,81 @@ toc: true
 number-sections: false
 ---
 
-::: callout-note
-You can delete everything in here and start fresh.
-:::
+Spurious Correlation example.
+
+Loading the required libraries:
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+Set seed for reproducability
+```{r}
+set.seed(210)
+```
+
+The following code has the following:
+
+* Simulation Function (simulate_ar):
+
+    + simulate_ar function generates a time series of length n with an auto-regressive structure defined by the parameter $\phi$.
+    + The auto-regressive process is simulated with the formula $Y_t = \phi \cdot Y_{t-1} + \epsilon_t$, where $\epsilon_t$ is a normally distributed random error with mean 0 and standard deviation sigma.
+    
+* Simulation and Testing Loop:
+
+    + Set up a grid of combinations for times, n, and phis using *"expand.grid"*.
+    + Iterates over each combination and performs a correlation test between two time series generated with the same auto-regressive structure but different random noise.
+    + The results are stored as matrix *res*.
+
+* Data Manipulation with dplyr:
+
+    + *res* converted to a data frame (dat) grouped by the phi values, and summary statistics (average absolute correlation, average absolute t-statistic, and the percentage of statistically significant p-values).
+    
+```{r}
+n <- 500
+times <- 100
+phis <- seq(0, 1, .02)
+comb <- expand.grid(times = seq(times), n = n, phis)
+ncomb <- nrow(comb)
+
+res <- matrix(NA, nrow = ncomb, ncol = 6)
+colnames(res) <- c('ix', 'n', 'phi', 'cor', 'tstat', 'pval')
+
+simulate_ar <- function(n, phi, sigma = .1) {
+  y <- rep(0, n)
+  
+  for (t in seq(2, n)) {
+    y[t] <- phi*y[t-1] + rnorm(1, 0, sigma)
+  }
+  
+  y
+}
+
+for (i in seq(ncomb)) {
+  ix <- comb[i, 1]
+  n <- comb[i, 2]
+  phi <- comb[i, 3]
+  
+  test <- cor.test(simulate_ar(n, phi = phi), simulate_ar(n, phi = phi))
+  res[i, ] <- c(ix, n, phi, test$estimate, test$statistic, test$p.value)
+}
+
+dat <- data.frame(res) %>% 
+  group_by(phi) %>% 
+  summarize(
+    avg_abs_corr = mean(abs(cor)),
+    avg_abs_tstat = mean(abs(tstat)),
+    percent_sig = mean(pval < .05)
+  )
+
+
+ggplot(dat, aes(x = phi, y = percent_sig)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "green") +
+  labs(title = "Spurious Correlation: phi vs Avg Abs Correlation",
+       x = "X - Phi",
+       y = "Y - Avg Abs Correlation") +
+  theme_minimal()
+```
+
+The plot shows a scatter plot with a **linear regression line**, and visualizes the average absolute correlation against the *phi* values. It helps in understanding how the **strength of the spurious correlation varies with different values of the auto-regressive parameter phi**.
