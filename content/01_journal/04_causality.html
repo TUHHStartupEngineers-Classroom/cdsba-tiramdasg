@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -43,6 +77,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -64,6 +101,11 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+<link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -177,19 +219,105 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<p>Spurious Correlation example.</p>
+<p>Loading the required libraries:</p>
+<div class="cell" data-hash="04_causality_cache/html/unnamed-chunk-1_540066d4cf19ae1d00ecea63a774b2df">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; 
+#&gt; Attaching package: 'dplyr'</code></pre>
 </div>
-<div class="callout-title-container flex-fill">
-Note
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; The following objects are masked from 'package:stats':
+#&gt; 
+#&gt;     filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; The following objects are masked from 'package:base':
+#&gt; 
+#&gt;     intersect, setdiff, setequal, union</code></pre>
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>You can delete everything in here and start fresh.</p>
+<p>Set seed for reproducability</p>
+<div class="cell" data-hash="04_causality_cache/html/unnamed-chunk-2_5835f8ea0df13a38cca6aafa690e96a5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">set.seed</span>(<span class="dv">210</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The following code has the following:</p>
+<ul>
+<li><p>Simulation Function (simulate_ar):</p>
+<ul>
+<li>simulate_ar function generates a time series of length n with an auto-regressive structure defined by the parameter <span class="math inline">\(\phi\)</span>.</li>
+<li>The auto-regressive process is simulated with the formula <span class="math inline">\(Y_t = \phi \cdot Y_{t-1} + \epsilon_t\)</span>, where <span class="math inline">\(\epsilon_t\)</span> is a normally distributed random error with mean 0 and standard deviation sigma.</li>
+</ul></li>
+<li><p>Simulation and Testing Loop:</p>
+<ul>
+<li>Set up a grid of combinations for times, n, and phis using <em>“expand.grid”</em>.</li>
+<li>Iterates over each combination and performs a correlation test between two time series generated with the same auto-regressive structure but different random noise.</li>
+<li>The results are stored as matrix <em>res</em>.</li>
+</ul></li>
+<li><p>Data Manipulation with dplyr:</p>
+<ul>
+<li><em>res</em> converted to a data frame (dat) grouped by the phi values, and summary statistics (average absolute correlation, average absolute t-statistic, and the percentage of statistically significant p-values).</li>
+</ul></li>
+</ul>
+<div class="cell" data-hash="04_causality_cache/html/unnamed-chunk-3_883a6005a57f50deb04937c1b6ce9b7c">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>times <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>phis <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, .<span class="dv">02</span>)</span>
+<span id="cb6-4"><a href="#cb6-4"></a>comb <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">times =</span> <span class="fu">seq</span>(times), <span class="at">n =</span> n, phis)</span>
+<span id="cb6-5"><a href="#cb6-5"></a>ncomb <span class="ot">&lt;-</span> <span class="fu">nrow</span>(comb)</span>
+<span id="cb6-6"><a href="#cb6-6"></a></span>
+<span id="cb6-7"><a href="#cb6-7"></a>res <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> ncomb, <span class="at">ncol =</span> <span class="dv">6</span>)</span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="fu">colnames</span>(res) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'ix'</span>, <span class="st">'n'</span>, <span class="st">'phi'</span>, <span class="st">'cor'</span>, <span class="st">'tstat'</span>, <span class="st">'pval'</span>)</span>
+<span id="cb6-9"><a href="#cb6-9"></a></span>
+<span id="cb6-10"><a href="#cb6-10"></a>simulate_ar <span class="ot">&lt;-</span> <span class="cf">function</span>(n, phi, <span class="at">sigma =</span> .<span class="dv">1</span>) {</span>
+<span id="cb6-11"><a href="#cb6-11"></a>  y <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, n)</span>
+<span id="cb6-12"><a href="#cb6-12"></a>  </span>
+<span id="cb6-13"><a href="#cb6-13"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">2</span>, n)) {</span>
+<span id="cb6-14"><a href="#cb6-14"></a>    y[t] <span class="ot">&lt;-</span> phi<span class="sc">*</span>y[t<span class="dv">-1</span>] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, sigma)</span>
+<span id="cb6-15"><a href="#cb6-15"></a>  }</span>
+<span id="cb6-16"><a href="#cb6-16"></a>  </span>
+<span id="cb6-17"><a href="#cb6-17"></a>  y</span>
+<span id="cb6-18"><a href="#cb6-18"></a>}</span>
+<span id="cb6-19"><a href="#cb6-19"></a></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq</span>(ncomb)) {</span>
+<span id="cb6-21"><a href="#cb6-21"></a>  ix <span class="ot">&lt;-</span> comb[i, <span class="dv">1</span>]</span>
+<span id="cb6-22"><a href="#cb6-22"></a>  n <span class="ot">&lt;-</span> comb[i, <span class="dv">2</span>]</span>
+<span id="cb6-23"><a href="#cb6-23"></a>  phi <span class="ot">&lt;-</span> comb[i, <span class="dv">3</span>]</span>
+<span id="cb6-24"><a href="#cb6-24"></a>  </span>
+<span id="cb6-25"><a href="#cb6-25"></a>  test <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(<span class="fu">simulate_ar</span>(n, <span class="at">phi =</span> phi), <span class="fu">simulate_ar</span>(n, <span class="at">phi =</span> phi))</span>
+<span id="cb6-26"><a href="#cb6-26"></a>  res[i, ] <span class="ot">&lt;-</span> <span class="fu">c</span>(ix, n, phi, test<span class="sc">$</span>estimate, test<span class="sc">$</span>statistic, test<span class="sc">$</span>p.value)</span>
+<span id="cb6-27"><a href="#cb6-27"></a>}</span>
+<span id="cb6-28"><a href="#cb6-28"></a></span>
+<span id="cb6-29"><a href="#cb6-29"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(res) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-30"><a href="#cb6-30"></a>  <span class="fu">group_by</span>(phi) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-31"><a href="#cb6-31"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb6-32"><a href="#cb6-32"></a>    <span class="at">avg_abs_corr =</span> <span class="fu">mean</span>(<span class="fu">abs</span>(cor)),</span>
+<span id="cb6-33"><a href="#cb6-33"></a>    <span class="at">avg_abs_tstat =</span> <span class="fu">mean</span>(<span class="fu">abs</span>(tstat)),</span>
+<span id="cb6-34"><a href="#cb6-34"></a>    <span class="at">percent_sig =</span> <span class="fu">mean</span>(pval <span class="sc">&lt;</span> .<span class="dv">05</span>)</span>
+<span id="cb6-35"><a href="#cb6-35"></a>  )</span>
+<span id="cb6-36"><a href="#cb6-36"></a></span>
+<span id="cb6-37"><a href="#cb6-37"></a></span>
+<span id="cb6-38"><a href="#cb6-38"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> phi, <span class="at">y =</span> percent_sig)) <span class="sc">+</span></span>
+<span id="cb6-39"><a href="#cb6-39"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb6-40"><a href="#cb6-40"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"green"</span>) <span class="sc">+</span></span>
+<span id="cb6-41"><a href="#cb6-41"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Spurious Correlation: phi vs Avg Abs Correlation"</span>,</span>
+<span id="cb6-42"><a href="#cb6-42"></a>       <span class="at">x =</span> <span class="st">"X - Phi"</span>,</span>
+<span id="cb6-43"><a href="#cb6-43"></a>       <span class="at">y =</span> <span class="st">"Y - Avg Abs Correlation"</span>) <span class="sc">+</span></span>
+<span id="cb6-44"><a href="#cb6-44"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; `geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="04_causality_files/figure-html/unnamed-chunk-3-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="04_causality_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
 </div>
 </div>
+</div>
+<p>The plot shows a scatter plot with a <strong>linear regression line</strong>, and visualizes the average absolute correlation against the <em>phi</em> values. It helps in understanding how the <strong>strength of the spurious correlation varies with different values of the auto-regressive parameter phi</strong>.</p>
 
 
 
@@ -543,6 +671,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","loop":true,"selector":".lightbox","openEffect":"zoom","closeEffect":"zoom"});</script>
 
 
 
