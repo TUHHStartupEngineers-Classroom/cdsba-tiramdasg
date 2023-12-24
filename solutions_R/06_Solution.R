@@ -1,22 +1,13 @@
----
-title: "Randomized Controlled Trials"
-author: "Geethika Tiramdas"
-subtitle: "Assignment solutions"
-toc: true
-number-sections: false
----
-
-## Part 1
-
-```{r}
 # Load necessary libraries
 library(readr)
 library(dplyr)
 library(ggplot2)
 
-abtest_data <- readRDS("../../Causal_Data_Science_Data/abtest_online.rds")
+# Load the dataset
+abtest_data <- readRDS("../cdsba-tiramdasg/Causal_Data_Science_Data/abtest_online.rds")
 
 # Part 1
+
 summary(abtest_data)
 
 ggplot(abtest_data, aes(x = chatbot, y = previous_visit, fill = chatbot)) +
@@ -36,37 +27,23 @@ ggplot(abtest_data, aes(x = as.factor(purchase), fill = chatbot)) +
   labs(title = "Binary outcome - purchase",
        x = "Purchase", y = "Count") +
   theme_minimal()
-```
 
-## Part 2
+# Part 2
 
-```{r}
 model_sales <- lm(purchase_amount ~ chatbot + mobile_device + previous_visit, data = abtest_data)
 summary(model_sales)
-```
 
-## Part 3
+# Part 3
 
-Include an interaction term for the subgroup (e.g., mobile users); chat bot interaction when using mobile device
-
-```{r}
 model_interaction <- lm(purchase_amount ~ chatbot * mobile_device + previous_visit, data = abtest_data)
 summary(model_interaction)
 
 # Compute the Conditional Average Treatment Effect (CATE) for mobile users
 cate_mobile <- coef(model_interaction)["chatbotTRUE:mobile_deviceTRUE"]
 cat("CATE for Mobile Users:", cate_mobile, "\n")
-```
 
-The CATE represents the additional effect of the `chatbot` for `mobile users compared to non-mobile users`. 
+# Part 4
 
-That is, if the coefficient is statistically significant and positive, it suggests that the effect of the chat bot *on sales* is different for mobile users compared to non-mobile users.
-
-**Here the effect of the chat bot on sales is not different for mobile users compared to non-mobile users.**
-
-## Part 4
-
-```{r}
 model_logistic <- glm(purchase ~ chatbot + mobile_device + previous_visit, data = abtest_data, family = "binomial")
 summary(model_logistic)
 
@@ -77,8 +54,3 @@ coef_chatbot <- coef(model_logistic)["chatbotTRUE"]
 odds_ratio <- exp(coef_chatbot)
 
 cat("Odds Ratio for Chatbot:", odds_ratio, "\n")
-```
-
-If odds_ratio is greater than 1, you can say that the introduction of the chatbot is associated with an increase in the odds of making a purchase, and vice versa.
-
-**Here it has no effect on increasing the odds of making the purchase.**
