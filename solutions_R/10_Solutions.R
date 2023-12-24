@@ -10,7 +10,7 @@ bw_half <- c0 + c(-2, 2)
 df_bw_below <- df %>% filter(days_since_last >= bw_half[1] & days_since_last < c0)
 df_bw_above <- df %>% filter(days_since_last >= c0 & days_since_last <= bw_half[2])
 df_bw_half <- bind_rows(df_bw_above, df_bw_below)
-# Dimention of data in [58, 62] interval
+# Dimension of data in [58, 62] interval
 dim(df_bw_half)
 
 model_bw_below <- lm(purchase_after ~ days_since_last, df_bw_below)
@@ -29,7 +29,7 @@ bw_double <- c0 + c(-10, 10)
 df_bw_below <- df %>% filter(days_since_last >= bw_double[1] & days_since_last < c0)
 df_bw_above <- df %>% filter(days_since_last >= c0 & days_since_last <= bw_double[2])
 df_bw_double <- bind_rows(df_bw_above, df_bw_below)
-# Dimention of data in [50, 70] interval
+# Dimension of data in [50, 70] interval
 dim(df_bw_double)
 
 model_bw_below <- lm(purchase_after ~ days_since_last, df_bw_below)
@@ -44,11 +44,6 @@ sprintf("LATE for double the bandwidth [50, 70]: %.2f", late)
 # Part 3
 df <- readRDS("../Causal_Data_Science_Data/shipping.rds")
 c0 = 30
-# options(repos = structure(c(CRAN = "https://cran.r-project.org")))
-# install.packages("rddensity")
 library(rddensity)
 rddd <- rddensity(df$purchase_amount, c = c0)
-# Visually check continuity at running variable
-# You can see that the confidence intervals doesn't overlap. If they did not overlap, 
-# there is some kind of manipulation around the cut-off so, we cannot use RDD to obtain valid results.
 rdd_plot <- rdplotdensity(rddd, df$purchase_amount, plotN = 100)
