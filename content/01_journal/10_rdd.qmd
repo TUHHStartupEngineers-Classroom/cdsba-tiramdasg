@@ -77,7 +77,7 @@ sprintf("LATE for double the bandwidth [50, 70]: %.2f", late)
 Visually check continuity at running variable. You can see that the confidence intervals doesn't overlap. If they did not overlap, there is some kind of manipulation around the cut-off so, we cannot use RDD to obtain valid results.
 
 ```{r}
-df <- readRDS("../Causal_Data_Science_Data/shipping.rds")
+df <- readRDS("../../Causal_Data_Science_Data/shipping.rds")
 c0 = 30
 library(rddensity)
 rddd <- rddensity(df$purchase_amount, c = c0)
