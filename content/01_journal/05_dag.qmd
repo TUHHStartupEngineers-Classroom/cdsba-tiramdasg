@@ -6,6 +6,78 @@ toc: true
 number-sections: false
 ---
 
-::: callout-note
-You can delete everything in here and start fresh.
-:::
+## Part 1
+
+Example from previous chapter (parking spots) and draw the DAG.
+
+In this DAG:
+
+* Location is the treatment variable (whether the store is in the city center or outside the city).
+* ParkingSpots is the variable representing whether the store has parking spots or not.
+* Sales is the outcome variable (sales of the store).
+
+The arrows in the DAG indicate the causal relationships between the variables. For example, there is an arrow from Location to ParkingSpots indicating that the location influences the availability of parking spots.
+
+```{r}
+
+# Load necessary packages
+library(dagitty)
+library(ggdag)
+library(tidyverse)
+
+# Part 1 
+dag <- dagitty("dag {
+  ParkingSpots -> Sales
+  Location -> ParkingSpots
+  Location -> Sales
+}")
+
+plot(dag)
+
+# Draw DAG
+ggdag(dag)
+```
+
+## Part 2
+
+Using `lm` function as linear regression model. `summary` to display detailed information about regression models.
+
+```{r}
+cust_sat <- readRDS("../../Causal_Data_Science_Data/customer_sat.rds")
+
+# 1. regress satisfaction on follow_ups
+model1 <- lm(satisfaction ~ follow_ups, data = cust_sat)
+summary(model1)
+
+# 2. regress satisfaction on follow_ups and account for subscription
+model2 <- lm(satisfaction ~ follow_ups + subscription, data = cust_sat)
+summary(model2)
+```
+
+## Part 3
+
+By observing both models, the coefficient for `follow_ups` is *-3.3093* in model 1, and *2.1944* in model 2.
+
+This maybe interpreted as for model 1, for each additional follow up call, `satisfaction` is decreasing by 3.3093 units holding subscription constant. Whereas for model 2, `satisfaction` increases 2.1944 units holding subscription constant.
+
+By comparison the relation between satisfaction and follow up maybe influenced by subscription, i.e., presence of subscription levels (Premium and Premium+) has an additional impact on satisfaction beyond the effect of follow-up calls alone.
+
+## Part 4
+
+```{r}
+# Not conditioning on subscription
+customer_sat_not_cond <- ggplot(cust_sat, aes(x = follow_ups, y = satisfaction)) +
+  geom_point() +
+  stat_smooth(method = "lm", se = FALSE)
+
+# Conditioning on subscription
+customer_sat_cond <- ggplot(cust_sat, aes(x = follow_ups, y = satisfaction, color = subscription)) +
+  geom_point() +
+  stat_smooth(method = "lm", se = FALSE) +
+  theme(legend.position = "right")
+
+# Plot both
+customer_sat_not_cond
+customer_sat_cond
+```
+

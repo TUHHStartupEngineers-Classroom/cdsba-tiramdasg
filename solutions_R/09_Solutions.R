@@ -1,20 +1,9 @@
----
-title: "Instrumental Variables"
-author: "Geethika Tiramdas"
-subtitle: "Assignment solutions"
-toc: true
-number-sections: false
----
-
-## Part 1
-
-```{r}
 library(dplyr)
 library(dagitty)
 library(ggdag)
 library(ggrepel)
 
-df <- readRDS("../../Causal_Data_Science_Data/rand_enc.rds")
+df <- readRDS("../Causal_Data_Science_Data/rand_enc.rds")
 
 # Part 1
 iv_expl <- dagify(
@@ -40,30 +29,19 @@ ggdag(iv_expl, text = TRUE) +
   geom_dag_edges(edge_color = "white") +
   geom_dag_label_repel(aes(label = label)) +
   theme(panel.background = element_rect(fill = "black"))
-```
 
-## Part 2
-
-```{r}
 # Part 2
 model_biased <- lm(time_spent ~ used_ftr, data = df)
 summary(model_biased)
-```
 
-## Part 3
-
-* random encouragement is correlated with the `used_ftr` (positive correlation)
-* random encouragement is not directly correlated with the `time_spent` which can be seen by correlation between `used_ftr` and `time_spent` and correlation between `rand_enc` and `time_spent`. Therefore IV estimation can be used.
-
-```{r}
+# Part 3
+# random encouragement is correlated with the used_ftr (positive correlation)
+# random encouragement is is not directly correlated with the time_spent which 
+# can be seen by correlation between used_ftr and time_spent and correlation between
+# rand_enc and time_spent. Therefore IV estimation can be used
 cor(df) %>% round(2)
-```
 
-## Part 4
-
-```{r}
+# Part 4
 library(estimatr)
 model_iv <- iv_robust(time_spent ~ used_ftr | rand_enc, data = df)
 summary(model_iv)
-```
-
