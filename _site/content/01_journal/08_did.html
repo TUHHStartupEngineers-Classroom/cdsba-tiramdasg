@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -63,6 +97,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+
+<link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 
 
 </head>
@@ -148,7 +185,14 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#part-1" id="toc-part-1" class="nav-link active" data-scroll-target="#part-1">Part 1</a></li>
+  <li><a href="#part-2" id="toc-part-2" class="nav-link" data-scroll-target="#part-2">Part 2</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -177,21 +221,200 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<section id="part-1" class="level2">
+<h2 class="anchored" data-anchor-id="part-1">Part 1</h2>
+<p>Assuming <code>frequency</code> of visits to the hospital is an even number after treatment and is odd before the treatment.</p>
+<div class="cell" data-hash="08_did_cache/html/unnamed-chunk-1_76bfac0286360dc933d8b11642670511">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Part 1</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; 
+#&gt; Attaching package: 'dplyr'</code></pre>
 </div>
-<div class="callout-title-container flex-fill">
-Note
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; The following objects are masked from 'package:stats':
+#&gt; 
+#&gt;     filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; The following objects are masked from 'package:base':
+#&gt; 
+#&gt;     intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>hosp_data <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../../Causal_Data_Science_Data/hospdd.rds"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="fu">head</span>(hosp_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["hospital"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["frequency"],"name":[2],"type":["int"],"align":["right"]},{"label":["month"],"name":[3],"type":["int"],"align":["right"]},{"label":["procedure"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["satis"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"3","3":"7","4":"1","5":"4.106527"},{"1":"1","2":"2","3":"3","4":"0","5":"3.319475"},{"1":"1","2":"4","3":"2","4":"0","5":"3.411720"},{"1":"1","2":"2","3":"4","4":"1","5":"3.004025"},{"1":"1","2":"1","3":"3","4":"0","5":"3.110720"},{"1":"1","2":"1","3":"7","4":"1","5":"2.882164"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>You can delete everything in here and start fresh.</p>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">summary</span>(hosp_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     hospital       frequency         month         procedure     
+#&gt;  Min.   : 1.00   Min.   :1.000   Min.   :1.000   Min.   :0.0000  
+#&gt;  1st Qu.:11.00   1st Qu.:1.000   1st Qu.:1.750   1st Qu.:0.0000  
+#&gt;  Median :23.00   Median :2.000   Median :3.500   Median :0.0000  
+#&gt;  Mean   :22.84   Mean   :2.473   Mean   :3.625   Mean   :0.2079  
+#&gt;  3rd Qu.:35.00   3rd Qu.:4.000   3rd Qu.:5.250   3rd Qu.:0.0000  
+#&gt;  Max.   :46.00   Max.   :4.000   Max.   :7.000   Max.   :1.0000  
+#&gt;      satis       
+#&gt;  Min.   :0.5468  
+#&gt;  1st Qu.:2.8888  
+#&gt;  Median :3.4975  
+#&gt;  Mean   :3.6191  
+#&gt;  3rd Qu.:4.2405  
+#&gt;  Max.   :9.7129</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>mean_satis_treated_before <span class="ot">&lt;-</span> hosp_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="fu">filter</span>(procedure <span class="sc">==</span> <span class="dv">0</span>, frequency <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="fu">pull</span>(satis) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="fu">mean</span>()</span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a>mean_satis_treated_after <span class="ot">&lt;-</span> hosp_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>  <span class="fu">filter</span>(procedure <span class="sc">==</span> <span class="dv">0</span>, frequency <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>  <span class="fu">pull</span>(satis) <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a>  <span class="fu">mean</span>()</span>
+<span id="cb8-10"><a href="#cb8-10"></a></span>
+<span id="cb8-11"><a href="#cb8-11"></a>mean_satis_control_before <span class="ot">&lt;-</span> hosp_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a>  <span class="fu">filter</span>(procedure <span class="sc">==</span> <span class="dv">1</span>, frequency <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a>  <span class="fu">pull</span>(satis) <span class="sc">%&gt;%</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a>  <span class="fu">mean</span>()</span>
+<span id="cb8-15"><a href="#cb8-15"></a></span>
+<span id="cb8-16"><a href="#cb8-16"></a>mean_satis_control_after <span class="ot">&lt;-</span> hosp_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a>  <span class="fu">filter</span>(procedure <span class="sc">==</span> <span class="dv">1</span>, frequency <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a>  <span class="fu">pull</span>(satis) <span class="sc">%&gt;%</span></span>
+<span id="cb8-19"><a href="#cb8-19"></a>  <span class="fu">mean</span>()</span>
+<span id="cb8-20"><a href="#cb8-20"></a></span>
+<span id="cb8-21"><a href="#cb8-21"></a><span class="fu">cat</span>(<span class="st">"Mean Satisfaction for Treated Hospitals Before Treatment:"</span>, mean_satis_treated_before, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Mean Satisfaction for Treated Hospitals Before Treatment: 3.468616</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="fu">cat</span>(<span class="st">"Mean Satisfaction for Treated Hospitals After Treatment:"</span>, mean_satis_treated_after, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Mean Satisfaction for Treated Hospitals After Treatment: 3.380761</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">cat</span>(<span class="st">"Mean Satisfaction for Control Hospitals Before Treatment:"</span>, mean_satis_control_before, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Mean Satisfaction for Control Hospitals Before Treatment: 4.39925</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">cat</span>(<span class="st">"Mean Satisfaction for Control Hospitals After Treatment:"</span>, mean_satis_control_after, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Mean Satisfaction for Control Hospitals After Treatment: 4.331852</code></pre>
 </div>
 </div>
+</section>
+<section id="part-2" class="level2">
+<h2 class="anchored" data-anchor-id="part-2">Part 2</h2>
+<p><strong>include group and time fixed effects in the regression, i.e.&nbsp;one regressor for each month and one regressor for each hospital</strong> as mentioned in the assignment.</p>
+<p>To achieve a regressor for each month and a regressor for each hospital, we should use <code>as.factor(month) + as.factor(hospital)</code>.</p>
+<p>The <code>month + hospital</code> approach treats them as continuous variables, assuming a linear relationship, while the <code>as.factor(month) + as.factor(hospital)</code> approach treats them as categorical factors, allowing for separate intercepts for each level. This approach allows for more flexibility in capturing potential non-linear relationships and different intercepts for each level.</p>
+<div class="cell" data-hash="08_did_cache/html/unnamed-chunk-2_485b48e5144b18a1c65306bf71a0b14c">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>model_1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(satis <span class="sc">~</span> frequency <span class="sc">+</span> month <span class="sc">+</span> hospital, <span class="at">data =</span> hosp_data)</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="fu">summary</span>(model_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = satis ~ frequency + month + hospital, data = hosp_data)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -3.3038 -0.6704 -0.0750  0.5787  5.7590 
+#&gt; 
+#&gt; Coefficients:
+#&gt;               Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)  3.6273420  0.0396118  91.572  &lt; 2e-16 ***
+#&gt; frequency    0.0538983  0.0101629   5.303 1.17e-07 ***
+#&gt; month        0.0720728  0.0055854  12.904  &lt; 2e-16 ***
+#&gt; hospital    -0.0176390  0.0008716 -20.238  &lt; 2e-16 ***
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 
+#&gt; Residual standard error: 1.015 on 7364 degrees of freedom
+#&gt; Multiple R-squared:  0.07561,    Adjusted R-squared:  0.07523 
+#&gt; F-statistic: 200.8 on 3 and 7364 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>model_2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(satis <span class="sc">~</span> frequency <span class="sc">+</span> <span class="fu">as.factor</span>(month) <span class="sc">+</span> <span class="fu">as.factor</span>(hospital), <span class="at">data =</span> hosp_data)</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="fu">summary</span>(model_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = satis ~ frequency + as.factor(month) + as.factor(hospital), 
+#&gt;     data = hosp_data)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -3.5176 -0.4868 -0.0163  0.4764  4.5046 
+#&gt; 
+#&gt; Coefficients:
+#&gt;                        Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)            3.302483   0.059857  55.173  &lt; 2e-16 ***
+#&gt; frequency              0.053751   0.007786   6.903 5.51e-12 ***
+#&gt; as.factor(month)2     -0.009608   0.030315  -0.317  0.75131    
+#&gt; as.factor(month)3      0.021969   0.030315   0.725  0.46867    
+#&gt; as.factor(month)4      0.349354   0.030315  11.524  &lt; 2e-16 ***
+#&gt; as.factor(month)5      0.343235   0.030315  11.322  &lt; 2e-16 ***
+#&gt; as.factor(month)6      0.348800   0.030315  11.506  &lt; 2e-16 ***
+#&gt; as.factor(month)7      0.341444   0.030315  11.263  &lt; 2e-16 ***
+#&gt; as.factor(hospital)2   0.369283   0.080360   4.595 4.39e-06 ***
+#&gt; as.factor(hospital)3   0.531657   0.082334   6.457 1.13e-10 ***
+#&gt; as.factor(hospital)4   0.239008   0.076751   3.114  0.00185 ** 
+#&gt; as.factor(hospital)5  -0.187606   0.076976  -2.437  0.01483 *  
+#&gt; as.factor(hospital)6   0.422811   0.076819   5.504 3.84e-08 ***
+#&gt; as.factor(hospital)7   1.395230   0.074166  18.812  &lt; 2e-16 ***
+#&gt; as.factor(hospital)8   0.073894   0.079201   0.933  0.35085    
+#&gt; as.factor(hospital)9  -1.541417   0.081267 -18.967  &lt; 2e-16 ***
+#&gt; as.factor(hospital)10  1.666597   0.080193  20.782  &lt; 2e-16 ***
+#&gt; as.factor(hospital)11  0.205881   0.079230   2.599  0.00938 ** 
+#&gt; as.factor(hospital)12 -0.088643   0.081205  -1.092  0.27504    
+#&gt; as.factor(hospital)13  0.474560   0.078374   6.055 1.47e-09 ***
+#&gt; as.factor(hospital)14  0.216930   0.082367   2.634  0.00846 ** 
+#&gt; as.factor(hospital)15 -0.180409   0.082498  -2.187  0.02879 *  
+#&gt; as.factor(hospital)16  1.413378   0.080158  17.632  &lt; 2e-16 ***
+#&gt; as.factor(hospital)17  0.394071   0.083686   4.709 2.54e-06 ***
+#&gt; as.factor(hospital)18  0.152851   0.097358   1.570  0.11646    
+#&gt; as.factor(hospital)19 -1.171264   0.082334 -14.226  &lt; 2e-16 ***
+#&gt; as.factor(hospital)20 -0.372378   0.080160  -4.645 3.45e-06 ***
+#&gt; as.factor(hospital)21  0.760720   0.084956   8.954  &lt; 2e-16 ***
+#&gt; as.factor(hospital)22  0.327933   0.083858   3.911 9.29e-05 ***
+#&gt; as.factor(hospital)23  0.247468   0.082450   3.001  0.00270 ** 
+#&gt; as.factor(hospital)24 -0.765773   0.088275  -8.675  &lt; 2e-16 ***
+#&gt; as.factor(hospital)25  0.182556   0.094751   1.927  0.05406 .  
+#&gt; as.factor(hospital)26 -0.231114   0.080218  -2.881  0.00397 ** 
+#&gt; as.factor(hospital)27 -0.831217   0.077505 -10.725  &lt; 2e-16 ***
+#&gt; as.factor(hospital)28  0.249922   0.085124   2.936  0.00334 ** 
+#&gt; as.factor(hospital)29 -0.230596   0.081591  -2.826  0.00472 ** 
+#&gt; as.factor(hospital)30 -0.597227   0.097361  -6.134 9.01e-10 ***
+#&gt; as.factor(hospital)31  0.064165   0.080233   0.800  0.42389    
+#&gt; as.factor(hospital)32 -0.767554   0.081252  -9.447  &lt; 2e-16 ***
+#&gt; as.factor(hospital)33 -0.904455   0.080250 -11.270  &lt; 2e-16 ***
+#&gt; as.factor(hospital)34 -0.419040   0.075363  -5.560 2.79e-08 ***
+#&gt; as.factor(hospital)35 -0.069493   0.077495  -0.897  0.36988    
+#&gt; as.factor(hospital)36  1.700127   0.078341  21.702  &lt; 2e-16 ***
+#&gt; as.factor(hospital)37 -0.301118   0.094608  -3.183  0.00146 ** 
+#&gt; as.factor(hospital)38 -0.501452   0.079212  -6.331 2.59e-10 ***
+#&gt; as.factor(hospital)39 -0.465018   0.083615  -5.561 2.77e-08 ***
+#&gt; as.factor(hospital)40  0.682455   0.079230   8.614  &lt; 2e-16 ***
+#&gt; as.factor(hospital)41 -0.595735   0.077561  -7.681 1.79e-14 ***
+#&gt; as.factor(hospital)42  0.432897   0.086529   5.003 5.78e-07 ***
+#&gt; as.factor(hospital)43 -1.206881   0.082348 -14.656  &lt; 2e-16 ***
+#&gt; as.factor(hospital)44 -0.438119   0.092421  -4.740 2.17e-06 ***
+#&gt; as.factor(hospital)45 -0.641833   0.077497  -8.282  &lt; 2e-16 ***
+#&gt; as.factor(hospital)46 -0.357058   0.083594  -4.271 1.97e-05 ***
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 
+#&gt; Residual standard error: 0.7512 on 7315 degrees of freedom
+#&gt; Multiple R-squared:  0.4973, Adjusted R-squared:  0.4938 
+#&gt; F-statistic: 139.2 on 52 and 7315 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>The difference is clearly seen by above code.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

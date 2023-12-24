@@ -1,20 +1,9 @@
----
-title: "Matching and Subclassification"
-author: "Geethika Tiramdas"
-subtitle: "Assignment solutions"
-toc: true
-number-sections: false
----
-
-## Part 1
-
-```{r}
 library(tidyverse)
 library(dagitty)
 library(ggplot2)
 
 # Load the data
-data <- readRDS("../../Causal_Data_Science_Data/membership.rds")
+data <- readRDS("../cdsba-tiramdasg/Causal_Data_Science_Data/membership.rds")
 
 # Part 1
 summary(data)
@@ -30,27 +19,18 @@ dag <- dagitty("dag {
 }")
 
 plot(dag)
-```
 
-## Part 2
 
-```{r}
 # Part 2
 model_naive <- lm(card ~ avg_purch, data = data)
 summary(model_naive)
-```
 
-## Part 3
+# Part 3
 
-```{r}
 library(MatchIt)
-```
 
-### 1. (Coarsened) Exact Matching
+# 1. (Coarsened) Exact Matching
 
-step 1 matching, step 2 estimation.
-
-```{r}
 # Matching
 cem <- matchit(card ~ avg_purch + age + sex + pre_avg_purch,
                data = data, 
@@ -63,11 +43,6 @@ matched_data_cem <- match.data(cem)
 model_cem <- lm(avg_purch ~ card + age + sex + pre_avg_purch, data = matched_data_cem, weights = weights)
 summary(model_cem)
 
-```
-
-Also including a Coarse Exact Matching with coarsion on cutpoints age and sex. This maybe wrong, but the graph looks pretty interesting.
-
-```{r}
 # Custom coarsening
 # (1) Matching
 cutpoints <- list(age = seq(16, 25, 60), sex = seq(0, 1))
@@ -97,11 +72,9 @@ ggplot(df_cem_coars, aes(x = age, y = sex,
 # (2) Estimation
 model_cem_coars <- lm(avg_purch ~ card + age + sex + pre_avg_purch, data = matched_data_cem, weights = weights)
 summary(model_cem_coars)
-```
 
-### 2. Nearest-Neighbor Matching
+# 2. Nearest-Neighbor Matching
 
-```{r}
 # (1) Matching
 # replace: one-to-one or one-to-many matching
 nn <- matchit(card ~ avg_purch + age + sex + pre_avg_purch,
@@ -118,11 +91,9 @@ df_nn <- match.data(nn)
 # (2) Estimation
 model_nn <- lm(avg_purch ~ card + age + sex + pre_avg_purch, data = df_nn, weights = weights)
 summary(model_nn)
-```
 
-### 3. Inverse Probability Weighting
+# 3. Inverse Probability Weighting
 
-```{r}
 # (1) Propensity scores
 model_prop <- glm(card ~ avg_purch + age + sex + pre_avg_purch,
                   data = data,
@@ -143,7 +114,3 @@ model_ipw <- lm(avg_purch ~ card,
                 data = df_ipw, 
                 weights = ipw)
 summary(model_ipw)
-```
-
-
-

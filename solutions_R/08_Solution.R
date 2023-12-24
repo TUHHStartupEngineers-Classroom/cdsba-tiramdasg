@@ -1,20 +1,7 @@
----
-title: "Difference-in-Differences"
-author: "Geethika Tiramdas"
-subtitle: "Assignment solutions"
-toc: true
-number-sections: false
----
-
-## Part 1
-
-Assuming `frequency` of visits to the hospital is an even number after treatment and is odd before the treatment.
-
-```{r}
 # Part 1
 library(dplyr)
 
-hosp_data <- readRDS("../../Causal_Data_Science_Data/hospdd.rds")
+hosp_data <- readRDS("../cdsba-tiramdasg/Causal_Data_Science_Data/hospdd.rds")
 head(hosp_data)
 summary(hosp_data)
 
@@ -37,31 +24,17 @@ mean_satis_control_after <- hosp_data %>%
   filter(procedure == 1, frequency %% 2 == 0)  %>%
   pull(satis) %>%
   mean()
-
 cat("Mean Satisfaction for Treated Hospitals Before Treatment:", mean_satis_treated_before, "\n")
 cat("Mean Satisfaction for Treated Hospitals After Treatment:", mean_satis_treated_after, "\n")
 cat("Mean Satisfaction for Control Hospitals Before Treatment:", mean_satis_control_before, "\n")
 cat("Mean Satisfaction for Control Hospitals After Treatment:", mean_satis_control_after, "\n")
-```
 
-## Part 2
+# Part 2
 
-**include group and time fixed effects in the regression, i.e. one regressor for each month and one regressor for each hospital** as mentioned in the assignment.
-
-To achieve a regressor for each month and a regressor for each hospital, we should use `as.factor(month) + as.factor(hospital)`.
- 
-The `month + hospital` approach treats them as continuous variables, assuming a linear relationship, while the `as.factor(month) + as.factor(hospital)` approach treats them as categorical factors, allowing for separate intercepts for each level. This approach allows for more flexibility in capturing potential non-linear relationships and different intercepts for each level.
-
-```{r}
 model_1 <- lm(satis ~ frequency + month + hospital, data = hosp_data)
 summary(model_1)
 
 model_2 <- lm(satis ~ frequency + as.factor(month) + as.factor(hospital), data = hosp_data)
 summary(model_2)
-```
-
-The difference is clearly seen by above code.
-
-
 
 
