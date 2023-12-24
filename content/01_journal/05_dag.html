@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -43,6 +77,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -63,6 +100,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+
+<link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 
 
 </head>
@@ -148,7 +188,16 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#part-1" id="toc-part-1" class="nav-link active" data-scroll-target="#part-1">Part 1</a></li>
+  <li><a href="#part-2" id="toc-part-2" class="nav-link" data-scroll-target="#part-2">Part 2</a></li>
+  <li><a href="#part-3" id="toc-part-3" class="nav-link" data-scroll-target="#part-3">Part 3</a></li>
+  <li><a href="#part-4" id="toc-part-4" class="nav-link" data-scroll-target="#part-4">Part 4</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -177,21 +226,165 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<section id="part-1" class="level2">
+<h2 class="anchored" data-anchor-id="part-1">Part 1</h2>
+<p>Example from previous chapter (parking spots) and draw the DAG.</p>
+<p>In this DAG:</p>
+<ul>
+<li>Location is the treatment variable (whether the store is in the city center or outside the city).</li>
+<li>ParkingSpots is the variable representing whether the store has parking spots or not.</li>
+<li>Sales is the outcome variable (sales of the store).</li>
+</ul>
+<p>The arrows in the DAG indicate the causal relationships between the variables. For example, there is an arrow from Location to ParkingSpots indicating that the location influences the availability of parking spots.</p>
+<div class="cell" data-hash="05_dag_cache/html/unnamed-chunk-1_be04233fc7a87291f2fb0b01012a289d">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Load necessary packages</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.4
+#&gt; ✔ forcats   1.0.0     ✔ stringr   1.5.1
+#&gt; ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+#&gt; ✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+#&gt; ✔ purrr     1.0.2     
+#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#&gt; ✖ dplyr::filter() masks ggdag::filter(), stats::filter()
+#&gt; ✖ dplyr::lag()    masks stats::lag()
+#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="callout-title-container flex-fill">
-Note
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Part 1 </span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">"dag {</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="st">  ParkingSpots -&gt; Sales</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="st">  Location -&gt; ParkingSpots</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="st">  Location -&gt; Sales</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="st">}"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7"></a></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="fu">plot</span>(dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Plot coordinates for graph not supplied! Generating coordinates, see ?coordinates for how to set your own.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="05_dag_files/figure-html/unnamed-chunk-1-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="05_dag_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>You can delete everything in here and start fresh.</p>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Draw DAG</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="fu">ggdag</span>(dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="05_dag_files/figure-html/unnamed-chunk-1-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="05_dag_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="part-2" class="level2">
+<h2 class="anchored" data-anchor-id="part-2">Part 2</h2>
+<p>Using <code>lm</code> function as linear regression model. <code>summary</code> to display detailed information about regression models.</p>
+<div class="cell" data-hash="05_dag_cache/html/unnamed-chunk-2_50a3ced3a61c3c217bca669b76a18061">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>cust_sat <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../../Causal_Data_Science_Data/customer_sat.rds"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># 1. regress satisfaction on follow_ups</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(satisfaction <span class="sc">~</span> follow_ups, <span class="at">data =</span> cust_sat)</span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = satisfaction ~ follow_ups, data = cust_sat)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -12.412  -5.257   1.733   4.506  12.588 
+#&gt; 
+#&gt; Coefficients:
+#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)  78.8860     4.2717  18.467 1.04e-10 ***
+#&gt; follow_ups   -3.3093     0.6618  -5.001 0.000243 ***
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 
+#&gt; Residual standard error: 7.923 on 13 degrees of freedom
+#&gt; Multiple R-squared:  0.658,  Adjusted R-squared:  0.6316 
+#&gt; F-statistic: 25.01 on 1 and 13 DF,  p-value: 0.0002427</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># 2. regress satisfaction on follow_ups and account for subscription</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(satisfaction <span class="sc">~</span> follow_ups <span class="sc">+</span> subscription, <span class="at">data =</span> cust_sat)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = satisfaction ~ follow_ups + subscription, data = cust_sat)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -4.3222 -2.1972  0.3167  2.2667  3.9944 
+#&gt; 
+#&gt; Coefficients:
+#&gt;                      Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)           26.7667     6.6804   4.007  0.00206 ** 
+#&gt; follow_ups             2.1944     0.7795   2.815  0.01682 *  
+#&gt; subscriptionPremium   44.7222     5.6213   7.956 6.88e-06 ***
+#&gt; subscriptionPremium+  18.0722     2.1659   8.344 4.37e-06 ***
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 
+#&gt; Residual standard error: 2.958 on 11 degrees of freedom
+#&gt; Multiple R-squared:  0.9597, Adjusted R-squared:  0.9487 
+#&gt; F-statistic: 87.21 on 3 and 11 DF,  p-value: 5.956e-08</code></pre>
+</div>
+</div>
+</section>
+<section id="part-3" class="level2">
+<h2 class="anchored" data-anchor-id="part-3">Part 3</h2>
+<p>By observing both models, the coefficient for <code>follow_ups</code> is <em>-3.3093</em> in model 1, and <em>2.1944</em> in model 2.</p>
+<p>This maybe interpreted as for model 1, for each additional follow up call, <code>satisfaction</code> is decreasing by 3.3093 units holding subscription constant. Whereas for model 2, <code>satisfaction</code> increases 2.1944 units holding subscription constant.</p>
+<p>By comparison the relation between satisfaction and follow up maybe influenced by subscription, i.e., presence of subscription levels (Premium and Premium+) has an additional impact on satisfaction beyond the effect of follow-up calls alone.</p>
+</section>
+<section id="part-4" class="level2">
+<h2 class="anchored" data-anchor-id="part-4">Part 4</h2>
+<div class="cell" data-hash="05_dag_cache/html/unnamed-chunk-3_70d86b7607fea66d030e6b7433081536">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Not conditioning on subscription</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>customer_sat_not_cond <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(cust_sat, <span class="fu">aes</span>(<span class="at">x =</span> follow_ups, <span class="at">y =</span> satisfaction)) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-5"><a href="#cb10-5"></a></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co"># Conditioning on subscription</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>customer_sat_cond <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(cust_sat, <span class="fu">aes</span>(<span class="at">x =</span> follow_ups, <span class="at">y =</span> satisfaction, <span class="at">color =</span> subscription)) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11"></a></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="co"># Plot both</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a>customer_sat_not_cond</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; `geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="05_dag_files/figure-html/unnamed-chunk-3-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="05_dag_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>customer_sat_cond</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; `geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="05_dag_files/figure-html/unnamed-chunk-3-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="05_dag_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
 </div>
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -543,6 +736,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":true,"selector":".lightbox","openEffect":"zoom","descPosition":"bottom"});</script>
 
 
 

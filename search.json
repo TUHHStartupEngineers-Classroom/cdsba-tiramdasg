@@ -32,7 +32,7 @@
     "href": "content/01_journal/09_iv.html",
     "title": "Instrumental Variables",
     "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+    "text": "library(dplyr)\n\n#&gt; \n#&gt; Attaching package: 'dplyr'\n\n\n#&gt; The following objects are masked from 'package:stats':\n#&gt; \n#&gt;     filter, lag\n\n\n#&gt; The following objects are masked from 'package:base':\n#&gt; \n#&gt;     intersect, setdiff, setequal, union\n\nlibrary(dagitty)\nlibrary(ggdag)\n\n#&gt; \n#&gt; Attaching package: 'ggdag'\n\n\n#&gt; The following object is masked from 'package:stats':\n#&gt; \n#&gt;     filter\n\nlibrary(ggrepel)\n\n#&gt; Loading required package: ggplot2\n\ndf &lt;- readRDS(\"../../Causal_Data_Science_Data/rand_enc.rds\")\n\n# Part 1\niv_expl &lt;- dagify(\n  Y ~ D,\n  Y ~ U,\n  D ~ U,\n  D ~ Z,\n  exposure = \"D\",\n  latent = \"U\",\n  outcome = \"Y\",\n  coords = list(x = c(U = 1, D = 0, Y = 2, Z = -1),\n                y = c(U = 1, D = 0, Y = 0, Z = 0)),\n  labels = c(\"D\" = \"Used New Features\",\n             \"Y\" = \"Time Spent\",\n             \"U\" = \"Unobserved Characteristics\",\n             \"Z\" = \"Random Encouragement\")\n)\n\n# Plot the DAG\nggdag(iv_expl, text = TRUE) +\n  geom_dag_point(color = \"lightblue\") +\n  geom_dag_text(color = \"white\") +\n  geom_dag_edges(edge_color = \"white\") +\n  geom_dag_label_repel(aes(label = label)) +\n  theme(panel.background = element_rect(fill = \"black\"))"
   },
   {
     "objectID": "content/01_journal/07_matching.html",
@@ -46,7 +46,7 @@
     "href": "content/01_journal/05_dag.html",
     "title": "Directed Acyclic Graphs",
     "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+    "text": "Example from previous chapter (parking spots) and draw the DAG.\nIn this DAG:\n\nLocation is the treatment variable (whether the store is in the city center or outside the city).\nParkingSpots is the variable representing whether the store has parking spots or not.\nSales is the outcome variable (sales of the store).\n\nThe arrows in the DAG indicate the causal relationships between the variables. For example, there is an arrow from Location to ParkingSpots indicating that the location influences the availability of parking spots.\n\n# Load necessary packages\nlibrary(dagitty)\nlibrary(ggdag)\nlibrary(tidyverse)\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.4\n#&gt; ✔ forcats   1.0.0     ✔ stringr   1.5.1\n#&gt; ✔ ggplot2   3.4.4     ✔ tibble    3.2.1\n#&gt; ✔ lubridate 1.9.3     ✔ tidyr     1.3.0\n#&gt; ✔ purrr     1.0.2     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter() masks ggdag::filter(), stats::filter()\n#&gt; ✖ dplyr::lag()    masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n# Part 1 \ndag &lt;- dagitty(\"dag {\n  ParkingSpots -&gt; Sales\n  Location -&gt; ParkingSpots\n  Location -&gt; Sales\n}\")\n\nplot(dag)\n\n#&gt; Plot coordinates for graph not supplied! Generating coordinates, see ?coordinates for how to set your own.\n\n\n\n\n\n\n\n\n# Draw DAG\nggdag(dag)"
   },
   {
     "objectID": "content/01_journal/06_rct.html",
@@ -96,5 +96,61 @@
     "title": "Statistical Concepts",
     "section": "2.1 Header 2",
     "text": "2.1 Header 2\n\nHeader 3\n\nHeader 4\n\nHeader 5\n\nHeader 6"
+  },
+  {
+    "objectID": "content/01_journal/05_dag.html#part-1",
+    "href": "content/01_journal/05_dag.html#part-1",
+    "title": "Directed Acyclic Graphs",
+    "section": "",
+    "text": "Example from previous chapter (parking spots) and draw the DAG.\nIn this DAG:\n\nLocation is the treatment variable (whether the store is in the city center or outside the city).\nParkingSpots is the variable representing whether the store has parking spots or not.\nSales is the outcome variable (sales of the store).\n\nThe arrows in the DAG indicate the causal relationships between the variables. For example, there is an arrow from Location to ParkingSpots indicating that the location influences the availability of parking spots.\n\n# Load necessary packages\nlibrary(dagitty)\nlibrary(ggdag)\nlibrary(tidyverse)\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.4\n#&gt; ✔ forcats   1.0.0     ✔ stringr   1.5.1\n#&gt; ✔ ggplot2   3.4.4     ✔ tibble    3.2.1\n#&gt; ✔ lubridate 1.9.3     ✔ tidyr     1.3.0\n#&gt; ✔ purrr     1.0.2     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter() masks ggdag::filter(), stats::filter()\n#&gt; ✖ dplyr::lag()    masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n# Part 1 \ndag &lt;- dagitty(\"dag {\n  ParkingSpots -&gt; Sales\n  Location -&gt; ParkingSpots\n  Location -&gt; Sales\n}\")\n\nplot(dag)\n\n#&gt; Plot coordinates for graph not supplied! Generating coordinates, see ?coordinates for how to set your own.\n\n\n\n\n\n\n\n\n# Draw DAG\nggdag(dag)"
+  },
+  {
+    "objectID": "content/01_journal/05_dag.html#part-2",
+    "href": "content/01_journal/05_dag.html#part-2",
+    "title": "Directed Acyclic Graphs",
+    "section": "Part 2",
+    "text": "Part 2\nUsing lm function as linear regression model. summary to display detailed information about regression models.\n\ncust_sat &lt;- readRDS(\"../../Causal_Data_Science_Data/customer_sat.rds\")\n\n# 1. regress satisfaction on follow_ups\nmodel1 &lt;- lm(satisfaction ~ follow_ups, data = cust_sat)\nsummary(model1)\n\n#&gt; \n#&gt; Call:\n#&gt; lm(formula = satisfaction ~ follow_ups, data = cust_sat)\n#&gt; \n#&gt; Residuals:\n#&gt;     Min      1Q  Median      3Q     Max \n#&gt; -12.412  -5.257   1.733   4.506  12.588 \n#&gt; \n#&gt; Coefficients:\n#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    \n#&gt; (Intercept)  78.8860     4.2717  18.467 1.04e-10 ***\n#&gt; follow_ups   -3.3093     0.6618  -5.001 0.000243 ***\n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n#&gt; \n#&gt; Residual standard error: 7.923 on 13 degrees of freedom\n#&gt; Multiple R-squared:  0.658,  Adjusted R-squared:  0.6316 \n#&gt; F-statistic: 25.01 on 1 and 13 DF,  p-value: 0.0002427\n\n# 2. regress satisfaction on follow_ups and account for subscription\nmodel2 &lt;- lm(satisfaction ~ follow_ups + subscription, data = cust_sat)\nsummary(model2)\n\n#&gt; \n#&gt; Call:\n#&gt; lm(formula = satisfaction ~ follow_ups + subscription, data = cust_sat)\n#&gt; \n#&gt; Residuals:\n#&gt;     Min      1Q  Median      3Q     Max \n#&gt; -4.3222 -2.1972  0.3167  2.2667  3.9944 \n#&gt; \n#&gt; Coefficients:\n#&gt;                      Estimate Std. Error t value Pr(&gt;|t|)    \n#&gt; (Intercept)           26.7667     6.6804   4.007  0.00206 ** \n#&gt; follow_ups             2.1944     0.7795   2.815  0.01682 *  \n#&gt; subscriptionPremium   44.7222     5.6213   7.956 6.88e-06 ***\n#&gt; subscriptionPremium+  18.0722     2.1659   8.344 4.37e-06 ***\n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n#&gt; \n#&gt; Residual standard error: 2.958 on 11 degrees of freedom\n#&gt; Multiple R-squared:  0.9597, Adjusted R-squared:  0.9487 \n#&gt; F-statistic: 87.21 on 3 and 11 DF,  p-value: 5.956e-08"
+  },
+  {
+    "objectID": "content/01_journal/05_dag.html#part-3",
+    "href": "content/01_journal/05_dag.html#part-3",
+    "title": "Directed Acyclic Graphs",
+    "section": "Part 3",
+    "text": "Part 3\nBy observing both models, the coefficient for follow_ups is -3.3093 in model 1, and 2.1944 in model 2.\nThis maybe interpreted as for model 1, for each additional follow up call, satisfaction is decreasing by 3.3093 units holding subscription constant. Whereas for model 2, satisfaction increases 2.1944 units holding subscription constant.\nBy comparison the relation between satisfaction and follow up maybe influenced by subscription, i.e., presence of subscription levels (Premium and Premium+) has an additional impact on satisfaction beyond the effect of follow-up calls alone."
+  },
+  {
+    "objectID": "content/01_journal/05_dag.html#part-4",
+    "href": "content/01_journal/05_dag.html#part-4",
+    "title": "Directed Acyclic Graphs",
+    "section": "Part 4",
+    "text": "Part 4\n\n# Not conditioning on subscription\ncustomer_sat_not_cond &lt;- ggplot(cust_sat, aes(x = follow_ups, y = satisfaction)) +\n  geom_point() +\n  stat_smooth(method = \"lm\", se = FALSE)\n\n# Conditioning on subscription\ncustomer_sat_cond &lt;- ggplot(cust_sat, aes(x = follow_ups, y = satisfaction, color = subscription)) +\n  geom_point() +\n  stat_smooth(method = \"lm\", se = FALSE) +\n  theme(legend.position = \"right\")\n\n# Plot both\ncustomer_sat_not_cond\n\n#&gt; `geom_smooth()` using formula = 'y ~ x'\n\n\n\n\n\n\n\n\ncustomer_sat_cond\n\n#&gt; `geom_smooth()` using formula = 'y ~ x'"
+  },
+  {
+    "objectID": "content/01_journal/09_iv.html#part-1",
+    "href": "content/01_journal/09_iv.html#part-1",
+    "title": "Instrumental Variables",
+    "section": "",
+    "text": "library(dplyr)\n\n#&gt; \n#&gt; Attaching package: 'dplyr'\n\n\n#&gt; The following objects are masked from 'package:stats':\n#&gt; \n#&gt;     filter, lag\n\n\n#&gt; The following objects are masked from 'package:base':\n#&gt; \n#&gt;     intersect, setdiff, setequal, union\n\nlibrary(dagitty)\nlibrary(ggdag)\n\n#&gt; \n#&gt; Attaching package: 'ggdag'\n\n\n#&gt; The following object is masked from 'package:stats':\n#&gt; \n#&gt;     filter\n\nlibrary(ggrepel)\n\n#&gt; Loading required package: ggplot2\n\ndf &lt;- readRDS(\"../../Causal_Data_Science_Data/rand_enc.rds\")\n\n# Part 1\niv_expl &lt;- dagify(\n  Y ~ D,\n  Y ~ U,\n  D ~ U,\n  D ~ Z,\n  exposure = \"D\",\n  latent = \"U\",\n  outcome = \"Y\",\n  coords = list(x = c(U = 1, D = 0, Y = 2, Z = -1),\n                y = c(U = 1, D = 0, Y = 0, Z = 0)),\n  labels = c(\"D\" = \"Used New Features\",\n             \"Y\" = \"Time Spent\",\n             \"U\" = \"Unobserved Characteristics\",\n             \"Z\" = \"Random Encouragement\")\n)\n\n# Plot the DAG\nggdag(iv_expl, text = TRUE) +\n  geom_dag_point(color = \"lightblue\") +\n  geom_dag_text(color = \"white\") +\n  geom_dag_edges(edge_color = \"white\") +\n  geom_dag_label_repel(aes(label = label)) +\n  theme(panel.background = element_rect(fill = \"black\"))"
+  },
+  {
+    "objectID": "content/01_journal/09_iv.html#part-2",
+    "href": "content/01_journal/09_iv.html#part-2",
+    "title": "Instrumental Variables",
+    "section": "Part 2",
+    "text": "Part 2\n\n# Part 2\nmodel_biased &lt;- lm(time_spent ~ used_ftr, data = df)\nsummary(model_biased)\n\n#&gt; \n#&gt; Call:\n#&gt; lm(formula = time_spent ~ used_ftr, data = df)\n#&gt; \n#&gt; Residuals:\n#&gt;      Min       1Q   Median       3Q      Max \n#&gt; -20.4950  -3.5393   0.0158   3.5961  20.5051 \n#&gt; \n#&gt; Coefficients:\n#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    \n#&gt; (Intercept) 18.86993    0.06955   271.3   &lt;2e-16 ***\n#&gt; used_ftr    10.82269    0.10888    99.4   &lt;2e-16 ***\n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n#&gt; \n#&gt; Residual standard error: 5.351 on 9998 degrees of freedom\n#&gt; Multiple R-squared:  0.497,  Adjusted R-squared:  0.497 \n#&gt; F-statistic:  9881 on 1 and 9998 DF,  p-value: &lt; 2.2e-16"
+  },
+  {
+    "objectID": "content/01_journal/09_iv.html#part-3",
+    "href": "content/01_journal/09_iv.html#part-3",
+    "title": "Instrumental Variables",
+    "section": "Part 3",
+    "text": "Part 3\n\nrandom encouragement is correlated with the used_ftr (positive correlation)\nrandom encouragement is not directly correlated with the time_spent which can be seen by correlation between used_ftr and time_spent and correlation between rand_enc and time_spent. Therefore IV estimation can be used.\n\n\ncor(df) %&gt;% round(2)\n\n#&gt;            rand_enc used_ftr time_spent\n#&gt; rand_enc       1.00     0.20       0.13\n#&gt; used_ftr       0.20     1.00       0.71\n#&gt; time_spent     0.13     0.71       1.00"
+  },
+  {
+    "objectID": "content/01_journal/09_iv.html#part-4",
+    "href": "content/01_journal/09_iv.html#part-4",
+    "title": "Instrumental Variables",
+    "section": "Part 4",
+    "text": "Part 4\n\nlibrary(estimatr)\nmodel_iv &lt;- iv_robust(time_spent ~ used_ftr | rand_enc, data = df)\nsummary(model_iv)\n\n#&gt; \n#&gt; Call:\n#&gt; iv_robust(formula = time_spent ~ used_ftr | rand_enc, data = df)\n#&gt; \n#&gt; Standard error type:  HC2 \n#&gt; \n#&gt; Coefficients:\n#&gt;             Estimate Std. Error t value  Pr(&gt;|t|) CI Lower CI Upper   DF\n#&gt; (Intercept)   19.312     0.2248   85.89 0.000e+00   18.872    19.75 9998\n#&gt; used_ftr       9.738     0.5353   18.19 8.716e-73    8.689    10.79 9998\n#&gt; \n#&gt; Multiple R-squared:  0.4921 ,    Adjusted R-squared:  0.492 \n#&gt; F-statistic:   331 on 1 and 9998 DF,  p-value: &lt; 2.2e-16"
   }
 ]
