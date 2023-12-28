@@ -61,6 +61,8 @@ cor(df) %>% round(2)
 
 ## Part 4
 
+Naive estimation is similar to IV estimate using 2SLS, it suggests that the naive estimate is unbiased.
+
 ```{r}
 library(estimatr)
 model_iv <- iv_robust(time_spent ~ used_ftr | rand_enc, data = df)
